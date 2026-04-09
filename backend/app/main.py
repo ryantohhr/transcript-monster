@@ -4,8 +4,13 @@ from sqlalchemy import text
 
 from app.api import transcript
 from app.db.session import get_db
+from app.db.init_db import init_db
 
 app = FastAPI()
+
+@app.on_event("startup")
+def on_startup():
+    init_db()
 
 app.include_router(transcript.router)
 

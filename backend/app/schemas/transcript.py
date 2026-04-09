@@ -12,3 +12,9 @@ class TranscriptSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+class TranscriptCreateRequest(BaseModel):
+    video_url: str
+
+class TranscriptCreateResponse(BaseModel):
+    transcript: TranscriptSchema

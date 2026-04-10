@@ -1,25 +1,34 @@
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime
 
+from sqlalchemy import String, func
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import Mapped, mapped_column
+
 from app.db.base import Base
+
 
 class Transcript(Base):
     __tablename__ = "transcripts"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-    video_id = Column(String, nullable=False, index=True)
-    video_url = Column(String, nullable=False)
-    video_title = Column(String, nullable=False)
-    channel_name = Column(String, nullable=False)
-    thumbnail_url = Column(String)
-    publish_date = Column(DateTime, nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    created_at: Mapped[datetime] = mapped_column(
+        nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+    video_id: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    video_url: Mapped[str] = mapped_column(String, nullable=False)
+    video_title: Mapped[str] = mapped_column(String, nullable=False)
+    channel_name: Mapped[str] = mapped_column(String, nullable=False)
+    thumbnail_url: Mapped[str | None] = mapped_column(String, nullable=True)
+    publish_date: Mapped[datetime] = mapped_column(nullable=False)
 
-    text_chunks = Column(JSONB, nullable=False)
-    timestamp_chunks = Column(JSONB, nullable=False)
+    text_chunks: Mapped[list] = mapped_column(JSONB, nullable=False)
+    timestamp_chunks: Mapped[list] = mapped_column(JSONB, nullable=False)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
-            f"<Transcript video_id={self.video_id!r} title={self.video_title!r} channel_name={self.channel_name!r} publish_date={self.publish_date}>"
+            f"<Transcript id={self.id} video_id={self.video_id!r}"
+            f" title={self.video_title!r}>"
         )

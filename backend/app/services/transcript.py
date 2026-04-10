@@ -1,38 +1,54 @@
-from youtube_transcript_api import YouTubeTranscriptApi
-from urllib.parse import parse_qs, urlparse
+import logging
+from dataclasses import dataclass
 from html import unescape
-import os
-import requests
+from urllib.parse import parse_qs, urlparse
 
+import requests
+from sqlalchemy.orm import Session
+from youtube_transcript_api import YouTubeTranscriptApi
+
+from app.core.config import settings
 from app.models.transcript import Transcript
-from app.db.session import SessionLocal
+
+logger = logging.getLogger(__name__)
 
 ytt_api = YouTubeTranscriptApi()
 
-def create_transcript(video_url: str):
+
+@dataclass(frozen=True)
+class VideoMetadata:
+    title: str
+    channel_name: str
+    thumbnail_url: str | None
+    publish_date: str
+
+
+def create_transcript(video_url: str, db: Session) -> Transcript:
     video_id = extract_video_id(video_url)
 
-    raw_transcript = fetch_transcript(video_id)
-    title, channel_name, thumbnail_url, publish_date = fetch_metadata(video_id)
+    existing = db.query(Transcript).filter_by(video_id=video_id).first()
+    if existing:
+        logger.info("Returning existing transcript for video_id=%s", video_id)
+        return existing
 
+    raw_transcript = fetch_transcript(video_id)
+    metadata = fetch_metadata(video_id)
     text_chunks, timestamp_chunks = get_transcript_chunks(raw_transcript)
 
     transcript = Transcript(
         video_id=video_id,
-        video_url= video_url,
-        video_title=title,
-        channel_name=channel_name,
-        thumbnail_url=thumbnail_url,
-        publish_date=publish_date,
+        video_url=video_url,
+        video_title=metadata.title,
+        channel_name=metadata.channel_name,
+        thumbnail_url=metadata.thumbnail_url,
+        publish_date=metadata.publish_date,
         text_chunks=text_chunks,
         timestamp_chunks=timestamp_chunks,
     )
 
-    save_transcript(transcript)
-
-    print(transcript)
-
+    save_transcript(transcript, db)
     return transcript
+
 
 def extract_video_id(video_url: str) -> str:
     parsed_url = urlparse(video_url)
@@ -44,12 +60,14 @@ def extract_video_id(video_url: str) -> str:
 
     return video_id
 
-def fetch_transcript(videoId: str):
-    transcript = ytt_api.fetch(videoId)
+
+def fetch_transcript(video_id: str) -> list[dict]:
+    transcript = ytt_api.fetch(video_id)
     return transcript.to_raw_data()
 
-def fetch_metadata(video_id: str):
-    api_key = os.getenv("GOOGLE_API_KEY")
+
+def fetch_metadata(video_id: str) -> VideoMetadata:
+    api_key = settings.GOOGLE_API_KEY
     if not api_key:
         raise ValueError("GOOGLE_API_KEY is required")
 
@@ -78,12 +96,13 @@ def fetch_metadata(video_id: str):
         or thumbnails.get("default", {}).get("url")
     )
 
-    return [
-        snippet.get("title"),
-        snippet.get("channelTitle"),
-        thumbnail_url,
-        snippet.get("publishedAt"),
-    ]
+    return VideoMetadata(
+        title=snippet.get("title", ""),
+        channel_name=snippet.get("channelTitle", ""),
+        thumbnail_url=thumbnail_url,
+        publish_date=snippet.get("publishedAt", ""),
+    )
+
 
 def format_timestamp(seconds: float) -> str:
     total_seconds = int(seconds)
@@ -91,15 +110,18 @@ def format_timestamp(seconds: float) -> str:
     minutes, secs = divmod(remainder, 60)
     return f"{hours:02d}:{minutes:02d}:{secs:02d}"
 
-def get_transcript_chunks(transcript, chunk_size: int = 3):
+
+def get_transcript_chunks(
+    raw_transcript: list[dict], chunk_size: int = 3
+) -> tuple[list[str], list[str]]:
     if chunk_size <= 0:
         raise ValueError("chunk_size must be greater than 0")
 
-    text_chunks = []
-    timestamp_chunks = []
+    text_chunks: list[str] = []
+    timestamp_chunks: list[str] = []
 
-    for i in range(0, len(transcript), chunk_size):
-        chunk_items = transcript[i : i + chunk_size]
+    for i in range(0, len(raw_transcript), chunk_size):
+        chunk_items = raw_transcript[i : i + chunk_size]
 
         current_text = []
         for item in chunk_items:
@@ -114,10 +136,9 @@ def get_transcript_chunks(transcript, chunk_size: int = 3):
 
     return text_chunks, timestamp_chunks
 
-def save_transcript(transcript: Transcript):
-    session = SessionLocal()
 
-    session.add(transcript)
-    session.commit()
-    print("saved transcript with id:", transcript.id)
-    session.refresh(transcript)
+def save_transcript(transcript: Transcript, db: Session) -> None:
+    db.add(transcript)
+    db.flush()
+    db.refresh(transcript)
+    logger.info("Saved transcript id=%s for video_id=%s", transcript.id, transcript.video_id)

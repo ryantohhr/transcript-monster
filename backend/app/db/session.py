@@ -1,15 +1,25 @@
+from collections.abc import Generator
+
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
+
 from app.core.config import settings
 
-DATABASE_URL = settings.database_url
+engine = create_engine(
+    settings.database_url, echo=settings.SQL_ECHO, future=True
+)
+SessionLocal = sessionmaker(
+    autocommit=False, autoflush=False, bind=engine
+)
 
-engine = create_engine(DATABASE_URL, echo=settings.SQL_ECHO, future=True)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-def get_db():
+def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
         yield db
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
     finally:
         db.close()

@@ -7,6 +7,7 @@ import DownloadFilePreview from "./DownloadFilePreview";
 import FileOptionsControl from "./FileOptionsControl";
 import TranscriptPreview from "./TranscriptPreview";
 import { Card } from "./ui/card";
+import ChatButton from "./chat/ChatButton";
 
 const defaultTranscriptOptions: TranscriptOptions = {
     filetype: "txt",
@@ -32,6 +33,7 @@ export default function TranscriptDownload({
             <Card className="p-10">
                 <TranscriptPreview transcript={transcript} />
                 <DownloadFilePreview transcriptText={transcriptText} />
+                <ChatButton transcript={transcript} />
             </Card>
             <div>
                 <FileOptionsControl

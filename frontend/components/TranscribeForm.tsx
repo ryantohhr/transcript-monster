@@ -25,6 +25,7 @@ import {
     FormLabel,
 } from "./ui/form";
 import { Input } from "./ui/input";
+import ChatButton from "./chat/ChatButton";
 
 const formSchema = z.object({
     url: z
@@ -120,6 +121,7 @@ export default function TranscribeForm({
                                         <Captions />
                                         Get Transcript
                                     </Button>
+                                    <ChatButton transcript={transcript} />
                                 </>
                             ) : (
                                 <Button

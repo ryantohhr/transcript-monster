@@ -1,4 +1,4 @@
-import { Home, ScrollText } from "lucide-react";
+import { Bot, Home, ScrollText } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -21,6 +21,11 @@ const pages = [
     title: "Transcribe",
     url: "/app/transcribe",
     icon: ScrollText,
+  },
+  {
+    title: "Chat",
+    url: "/app/chat",
+    icon: Bot,
   },
 ];
 

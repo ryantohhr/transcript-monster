@@ -23,6 +23,9 @@ class Settings(BaseSettings):
 
     GOOGLE_API_KEY: str | None = None
 
+    OPENROUTER_API_KEY: str
+    OPENROUTER_MODEL: str
+
     CORS_ORIGINS: list[str] = ["http://localhost:3000"]
 
     @model_validator(mode="after")
@@ -34,9 +37,7 @@ class Settings(BaseSettings):
                 if not getattr(self, name)
             ]
             if missing:
-                raise ValueError(
-                    f"Either DATABASE_URL or all of {missing} must be set"
-                )
+                raise ValueError(f"Either DATABASE_URL or all of {missing} must be set")
         return self
 
     @property

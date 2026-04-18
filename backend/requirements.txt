@@ -8,6 +8,7 @@ defusedxml==0.7.1
 fastapi==0.135.3
 h11==0.16.0
 idna==3.11
+langchain-anthropic>=0.3.0
 langchain-core>=0.3.0
 langchain-openrouter>=0.2.1
 langgraph>=0.3.0

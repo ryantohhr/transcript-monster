@@ -30,9 +30,9 @@ export default function ChatMessageBubble({ message }: Props) {
                     <span className="size-1.5 rounded-full bg-gray-400 animate-bounce [animation-delay:300ms]" />
                 </span>
             ) : (
-                <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-foreground">
+                <div className="prose prose-sm max-w-none text-foreground">
                     <Markdown>{message.content}</Markdown>
-                </p>
+                </div>
             )}
         </div>
     );

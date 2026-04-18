@@ -1,6 +1,7 @@
 "use client";
 
 import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type { AnyMessage } from "@/types/chat";
 
 type Props = {
@@ -31,7 +32,7 @@ export default function ChatMessageBubble({ message }: Props) {
                 </span>
             ) : (
                 <div className="prose prose-sm max-w-none text-foreground">
-                    <Markdown>{message.content}</Markdown>
+                    <Markdown remarkPlugins={[remarkGfm]}>{message.content}</Markdown>
                 </div>
             )}
         </div>

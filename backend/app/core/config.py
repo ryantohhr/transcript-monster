@@ -23,8 +23,14 @@ class Settings(BaseSettings):
 
     GOOGLE_API_KEY: str | None = None
 
-    OPENROUTER_API_KEY: str
-    OPENROUTER_MODEL: str
+    # LLM provider: "openrouter" or "anthropic"
+    LLM_PROVIDER: str = "openrouter"
+
+    OPENROUTER_API_KEY: str | None = None
+    OPENROUTER_MODEL: str | None = None
+
+    ANTHROPIC_API_KEY: str | None = None
+    ANTHROPIC_MODEL: str | None = None
 
     CORS_ORIGINS: list[str] = ["http://localhost:3000"]
 
@@ -38,6 +44,33 @@ class Settings(BaseSettings):
             ]
             if missing:
                 raise ValueError(f"Either DATABASE_URL or all of {missing} must be set")
+
+        provider = self.LLM_PROVIDER.lower()
+        if provider == "openrouter":
+            missing_llm = [
+                name
+                for name in ("OPENROUTER_API_KEY", "OPENROUTER_MODEL")
+                if not getattr(self, name)
+            ]
+            if missing_llm:
+                raise ValueError(
+                    f"LLM_PROVIDER=openrouter requires: {', '.join(missing_llm)}"
+                )
+        elif provider == "anthropic":
+            missing_llm = [
+                name
+                for name in ("ANTHROPIC_API_KEY", "ANTHROPIC_MODEL")
+                if not getattr(self, name)
+            ]
+            if missing_llm:
+                raise ValueError(
+                    f"LLM_PROVIDER=anthropic requires: {', '.join(missing_llm)}"
+                )
+        else:
+            raise ValueError(
+                f"Unknown LLM_PROVIDER={provider!r}. Must be 'openrouter' or 'anthropic'."
+            )
+
         return self
 
     @property

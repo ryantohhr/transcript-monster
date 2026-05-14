@@ -43,7 +43,8 @@ class Settings(BaseSettings):
                 if not getattr(self, name)
             ]
             if missing:
-                raise ValueError(f"Either DATABASE_URL or all of {missing} must be set")
+                raise ValueError(f"Either DATABASE_URL or all of {
+                                 missing} must be set")
 
         provider = self.LLM_PROVIDER.lower()
         if provider == "openrouter":
@@ -54,7 +55,8 @@ class Settings(BaseSettings):
             ]
             if missing_llm:
                 raise ValueError(
-                    f"LLM_PROVIDER=openrouter requires: {', '.join(missing_llm)}"
+                    f"LLM_PROVIDER=openrouter requires: {
+                        ', '.join(missing_llm)}"
                 )
         elif provider == "anthropic":
             missing_llm = [
@@ -64,11 +66,13 @@ class Settings(BaseSettings):
             ]
             if missing_llm:
                 raise ValueError(
-                    f"LLM_PROVIDER=anthropic requires: {', '.join(missing_llm)}"
+                    f"LLM_PROVIDER=anthropic requires: {
+                        ', '.join(missing_llm)}"
                 )
         else:
             raise ValueError(
-                f"Unknown LLM_PROVIDER={provider!r}. Must be 'openrouter' or 'anthropic'."
+                f"Unknown LLM_PROVIDER={
+                    provider!r}. Must be 'openrouter' or 'anthropic'."
             )
 
         return self

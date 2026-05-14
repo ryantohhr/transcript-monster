@@ -121,7 +121,7 @@ def get_transcript_chunks(
     timestamp_chunks: list[str] = []
 
     for i in range(0, len(raw_transcript), chunk_size):
-        chunk_items = raw_transcript[i : i + chunk_size]
+        chunk_items = raw_transcript[i: i + chunk_size]
 
         current_text = []
         for item in chunk_items:
@@ -141,4 +141,6 @@ def save_transcript(transcript: Transcript, db: Session) -> None:
     db.add(transcript)
     db.flush()
     db.refresh(transcript)
-    logger.info("Saved transcript id=%s for video_id=%s", transcript.id, transcript.video_id)
+    logger.info(
+        "Saved transcript id=%s for video_id=%s", transcript.id, transcript.video_id
+    )

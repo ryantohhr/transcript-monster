@@ -27,7 +27,8 @@ def create_transcript_endpoint(
         raise HTTPException(status_code=422, detail=str(exc))
     except Exception:
         logger.exception("Failed to create transcript")
-        raise HTTPException(status_code=502, detail="Failed to fetch transcript data")
+        raise HTTPException(
+            status_code=502, detail="Failed to fetch transcript data")
 
     return TranscriptCreateResponse(
         transcript=TranscriptSchema.model_validate(transcript)

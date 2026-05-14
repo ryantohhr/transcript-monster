@@ -55,6 +55,7 @@ def create_chat_session(
 
     return ChatSessionCreateResponse(session=ChatSessionSchema.model_validate(session))
 
+
 @router.post("/sessions/{session_id}/messages")
 async def send_message(
     session_id: uuid.UUID,
@@ -73,7 +74,8 @@ async def send_message(
     response, then treat ``done`` as the signal to stop listening.
     """
     if not body.content.strip():
-        raise HTTPException(status_code=422, detail="Message content cannot be empty.")
+        raise HTTPException(
+            status_code=422, detail="Message content cannot be empty.")
 
     session = db.get(ChatSession, session_id)
     if session is None:
@@ -84,7 +86,8 @@ async def send_message(
 
     transcript = db.get(Transcript, session.transcript_id)
     if transcript is None:
-        raise HTTPException(status_code=404, detail="Associated transcript not found.")
+        raise HTTPException(
+            status_code=404, detail="Associated transcript not found.")
 
     user_msg = ChatMessage(
         session_id=session_id,
@@ -127,7 +130,8 @@ async def send_message(
             yield f"data: {json.dumps({'type': 'done', 'content': ''})}\n\n"
 
         except ValueError as exc:
-            logger.warning("Chat config error for session %s: %s", session_id, exc)
+            logger.warning(
+                "Chat config error for session %s: %s", session_id, exc)
             db.rollback()
             yield f"data: {json.dumps({'type': 'error', 'content': str(exc)})}\n\n"
 
@@ -165,7 +169,8 @@ def get_message_history(
             detail=f"Chat session {session_id} not found.",
         )
 
-    messages = [ChatMessageSchema.model_validate(msg) for msg in session.messages]
+    messages = [ChatMessageSchema.model_validate(
+        msg) for msg in session.messages]
     return ChatHistoryResponse(messages=messages)
 
 

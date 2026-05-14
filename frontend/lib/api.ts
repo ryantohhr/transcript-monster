@@ -109,6 +109,76 @@ export async function getChatHistory(sessionId: string): Promise<ChatMessage[]> 
     return (data.messages as ApiChatMessage[]).map(transformChatMessage);
 }
 
+export async function getTranscriptHistory(limit = 50): Promise<Transcript[]> {
+    const res = await fetch(`${API_URL}/transcript/history?limit=${limit}`);
+
+    if (!res.ok) {
+        const error = await res.json().catch(() => ({ detail: "Unknown error" }));
+        throw new Error(error.detail ?? "Failed to fetch transcript history");
+    }
+
+    const data = await res.json();
+    return (data.transcripts as ApiTranscript[]).map(transformTranscript);
+}
+
+export async function getTranscript(id: string): Promise<Transcript> {
+    const res = await fetch(`${API_URL}/transcript/${id}`);
+
+    if (!res.ok) {
+        const error = await res.json().catch(() => ({ detail: "Unknown error" }));
+        throw new Error(error.detail ?? "Failed to fetch transcript");
+    }
+
+    const data = await res.json();
+    return transformTranscript(data.transcript as ApiTranscript);
+}
+
+export async function deleteTranscript(id: string): Promise<void> {
+    const res = await fetch(`${API_URL}/transcript/${id}`, { method: "DELETE" });
+
+    if (!res.ok) {
+        const error = await res.json().catch(() => ({ detail: "Unknown error" }));
+        throw new Error(error.detail ?? "Failed to delete transcript");
+    }
+}
+
+export async function getChatSessionsHistory(
+    limit = 50,
+): Promise<ChatSession[]> {
+    const res = await fetch(`${API_URL}/chat/sessions/history?limit=${limit}`);
+
+    if (!res.ok) {
+        const error = await res.json().catch(() => ({ detail: "Unknown error" }));
+        throw new Error(error.detail ?? "Failed to fetch chat sessions history");
+    }
+
+    const data = await res.json();
+    return (data.sessions as ApiChatSession[]).map(transformChatSession);
+}
+
+export async function getChatSession(id: string): Promise<ChatSession> {
+    const res = await fetch(`${API_URL}/chat/sessions/${id}`);
+
+    if (!res.ok) {
+        const error = await res.json().catch(() => ({ detail: "Unknown error" }));
+        throw new Error(error.detail ?? "Failed to fetch chat session");
+    }
+
+    const data = await res.json();
+    return transformChatSession(data.session as ApiChatSession);
+}
+
+export async function deleteChatSession(sessionId: string): Promise<void> {
+    const res = await fetch(`${API_URL}/chat/sessions/${sessionId}`, {
+        method: "DELETE",
+    });
+
+    if (!res.ok) {
+        const error = await res.json().catch(() => ({ detail: "Unknown error" }));
+        throw new Error(error.detail ?? "Failed to delete chat session");
+    }
+}
+
 export function sendChatMessage(
     sessionId: string,
     content: string,

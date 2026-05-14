@@ -53,13 +53,10 @@ function ChatPageInner() {
         const rawId = searchParams.get("transcriptId");
         if (!rawId) return;
 
-        const transcriptId = parseInt(rawId, 10);
-        if (isNaN(transcriptId)) return;
-
         setIsInitialising(true);
         setInitError(null);
 
-        createChatSession(transcriptId)
+        createChatSession(rawId)
             .then((session) => {
                 setSessionId(session.id);
                 router.replace("/app/chat");

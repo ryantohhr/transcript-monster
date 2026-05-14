@@ -26,3 +26,11 @@ class TranscriptCreateRequest(BaseModel):
 
 class TranscriptCreateResponse(BaseModel):
     transcript: TranscriptSchema
+
+
+class TranscriptHistoryResponse(BaseModel):
+    transcripts: list[TranscriptSchema]
+
+
+class TranscriptItemResponse(BaseModel):
+    transcript: TranscriptSchema

@@ -17,6 +17,8 @@ from app.schemas.chat import (
     ChatMessageSchema,
     ChatSessionCreateRequest,
     ChatSessionCreateResponse,
+    ChatSessionItemResponse,
+    ChatSessionHistoryResponse,
     ChatSessionSchema,
 )
 from app.services.ai.graph import stream_agent_response
@@ -172,6 +174,45 @@ def get_message_history(
     messages = [ChatMessageSchema.model_validate(
         msg) for msg in session.messages]
     return ChatHistoryResponse(messages=messages)
+
+
+@router.get("/sessions/history", response_model=ChatSessionHistoryResponse)
+def get_chat_sessions_history(
+    limit: int = 50,
+    db: Session = Depends(get_db),
+) -> ChatSessionHistoryResponse:
+    sessions = (
+        db.query(ChatSession)
+        .order_by(ChatSession.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+    return ChatSessionHistoryResponse(
+        sessions=[ChatSessionSchema.model_validate(s) for s in sessions]
+    )
+
+
+@router.get("/sessions/{session_id}", response_model=ChatSessionItemResponse)
+def get_chat_session(
+    session_id: uuid.UUID,
+    db: Session = Depends(get_db),
+) -> ChatSessionItemResponse:
+    session = db.get(ChatSession, session_id)
+    if session is None:
+        raise HTTPException(status_code=404, detail="Chat session not found")
+    return ChatSessionItemResponse(session=ChatSessionSchema.model_validate(session))
+
+
+@router.delete("/sessions/{session_id}", status_code=204)
+def delete_chat_session(
+    session_id: uuid.UUID,
+    db: Session = Depends(get_db),
+) -> None:
+    session = db.get(ChatSession, session_id)
+    if session is None:
+        raise HTTPException(status_code=404, detail="Chat session not found")
+    db.delete(session)
+    db.commit()
 
 
 def _build_lc_messages(

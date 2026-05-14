@@ -37,3 +37,11 @@ class ChatMessageRequest(BaseModel):
 
 class ChatHistoryResponse(BaseModel):
     messages: list[ChatMessageSchema]
+
+
+class ChatSessionHistoryResponse(BaseModel):
+    sessions: list[ChatSessionSchema]
+
+
+class ChatSessionItemResponse(BaseModel):
+    session: ChatSessionSchema

@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 from typing import Any
 
@@ -7,7 +8,7 @@ from pydantic import BaseModel, ConfigDict
 class TranscriptSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: int
+    id: uuid.UUID
     video_id: str
     video_url: str
     video_title: str

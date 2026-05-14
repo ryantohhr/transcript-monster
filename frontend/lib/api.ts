@@ -4,7 +4,7 @@ import type { ChatMessage, ChatSession, SseEvent } from "@/types/chat";
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 type ApiTranscript = {
-    id: number;
+    id: string;
     video_id: string;
     video_url: string;
     video_title: string;
@@ -49,7 +49,7 @@ export async function createTranscript(videoUrl: string): Promise<Transcript> {
 
 type ApiChatSession = {
     id: string;
-    transcript_id: number;
+    transcript_id: string;
     created_at: string;
 };
 
@@ -80,7 +80,7 @@ function transformChatMessage(raw: ApiChatMessage): ChatMessage {
 }
 
 export async function createChatSession(
-    transcriptId: number,
+    transcriptId: string,
 ): Promise<ChatSession> {
     const res = await fetch(`${API_URL}/chat/sessions/create`, {
         method: "POST",

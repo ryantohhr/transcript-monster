@@ -50,7 +50,7 @@ def create_chat_session(
     db.flush()
 
     logger.info(
-        "Created chat session %s for transcript %d", session.id, body.transcript_id
+        "Created chat session %s for transcript %s", session.id, body.transcript_id
     )
 
     return ChatSessionCreateResponse(session=ChatSessionSchema.model_validate(session))

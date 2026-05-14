@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 
 export type Transcript = {
-    id: number;
+    id: string;
     videoId: string;
     videoUrl: string;
     videoTitle: string;

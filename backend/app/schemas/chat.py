@@ -9,7 +9,7 @@ class ChatSessionSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: uuid.UUID
-    transcript_id: int
+    transcript_id: uuid.UUID
     created_at: datetime
 
 
@@ -24,7 +24,7 @@ class ChatMessageSchema(BaseModel):
 
 
 class ChatSessionCreateRequest(BaseModel):
-    transcript_id: int
+    transcript_id: uuid.UUID
 
 
 class ChatSessionCreateResponse(BaseModel):

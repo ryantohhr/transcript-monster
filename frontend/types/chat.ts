@@ -1,6 +1,6 @@
 export type ChatSession = {
     id: string;
-    transcriptId: number;
+    transcriptId: string;
     createdAt: string;
 };
 

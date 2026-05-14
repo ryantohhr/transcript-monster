@@ -23,7 +23,8 @@ class ChatSession(Base):
         nullable=False, server_default=func.now(), onupdate=func.now()
     )
 
-    transcript_id: Mapped[int] = mapped_column(
+    transcript_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
         ForeignKey("transcripts.id", ondelete="CASCADE"),
         nullable=False,
         index=True,

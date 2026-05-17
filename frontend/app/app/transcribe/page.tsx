@@ -1,25 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import TranscribeForm from "@/components/TranscribeForm";
-import TranscriptDownload from "@/components/TranscriptDownload";
-import type { Transcript } from "@/types/transcript";
+import { Suspense, useState } from "react";
+import { LoaderCircle } from "lucide-react";
+import TranscriptHistoryList from "@/components/TranscriptHistoryList";
 
-export default function Transcribe() {
-  const [transcript, setTranscript] = useState<Transcript | null>(null);
-  const [showTranscript, setShowTranscript] = useState<boolean>(false);
+export default function TranscribePage() {
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleDeleted = () => setRefreshKey((k) => k + 1);
 
   return (
-    <div>
-      {showTranscript && transcript ? (
-        <TranscriptDownload transcript={transcript} />
-      ) : (
-        <TranscribeForm
-          transcript={transcript}
-          setTranscript={setTranscript}
-          setShowTranscript={setShowTranscript}
-        />
-      )}
-    </div>
+    <Suspense
+        key={refreshKey}
+        fallback={
+          <div className="flex justify-center py-8">
+            <LoaderCircle className="animate-spin" />
+          </div>
+        }
+      >
+        <TranscriptHistoryList onDeleted={handleDeleted} />
+      </Suspense>
   );
 }

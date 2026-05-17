@@ -33,40 +33,42 @@ export default function TranscriptHistoryItem({
 
   return (
     <Card className="p-4 hover:bg-gray-50 transition-colors">
-      <Link
-        href={`/app/transcribe?transcriptId=${transcript.id}`}
-        className="flex gap-3"
-      >
-        {transcript.thumbnailUrl && (
-          <Thumbnail
-            url={transcript.thumbnailUrl}
-            alt={transcript.videoTitle}
-            className="w-24 h-16 object-cover rounded"
-          />
-        )}
-        <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm truncate">
-            {transcript.videoTitle}
-          </h3>
-          <div className="flex gap-3 text-xs text-muted-foreground mt-1">
-            <span className="flex items-center gap-1">
-              <User size={12} /> {transcript.channelName}
-            </span>
-            <span className="flex items-center gap-1">
-              <CalendarDays size={12} /> {formatDate(transcript.publishDate)}
-            </span>
+      <div className="flex items-center gap-3">
+        <Link
+          href={`/app/transcribe/${transcript.id}`}
+          className="flex gap-3 flex-1 min-w-0"
+        >
+          {transcript.thumbnailUrl && (
+            <Thumbnail
+              url={transcript.thumbnailUrl}
+              alt={transcript.videoTitle}
+              className="w-24 h-16 object-cover rounded shrink-0"
+            />
+          )}
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-sm truncate">
+              {transcript.videoTitle}
+            </h3>
+            <div className="flex gap-3 text-xs text-muted-foreground mt-1">
+              <span className="flex items-center gap-1">
+                <User size={12} /> {transcript.channelName}
+              </span>
+              <span className="flex items-center gap-1">
+                <CalendarDays size={12} /> {formatDate(transcript.publishDate)}
+              </span>
+            </div>
           </div>
-        </div>
-      </Link>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleDelete}
-        disabled={isDeleting}
-        className="mt-2 text-red-600 hover:text-red-700"
-      >
-        <Trash2 size={14} /> Delete
-      </Button>
+        </Link>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleDelete}
+          disabled={isDeleting}
+          className="shrink-0 text-red-600 hover:text-red-700 cursor-pointer"
+        >
+          <Trash2 size={14} />
+        </Button>
+      </div>
     </Card>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, ScrollText } from "lucide-react";
 import TranscribeDialog from "@/components/TranscribeDialog";
 import { Button } from "@/components/ui/button";
 
@@ -19,8 +19,8 @@ export default function TranscribeLayout({
 
   return (
     <div className="w-full px-6 py-4">
-      <div className="flex justify-between items-center mb-4">
-        {isDetailPage && (
+      <div className="flex justify-between items-center mb-4 pb-4 border-b">
+        {isDetailPage ? (
           <Button
             variant="ghost"
             onClick={() => router.push("/app/transcribe")}
@@ -29,16 +29,19 @@ export default function TranscribeLayout({
             <ArrowLeft size={16} />
             Back to History
           </Button>
+        ) : (
+          <h1 className="text-2xl font-semibold flex items-center gap-2">
+            <ScrollText size={24} />
+            Your Transcripts
+          </h1>
         )}
-        <div className={isDetailPage ? "" : "ml-auto"}>
-          <Button
-            onClick={() => setDialogOpen(true)}
-            className="bg-red-600 hover:bg-red-700 cursor-pointer"
-          >
-            <Plus size={16} />
-            New Transcript
-          </Button>
-        </div>
+        <Button
+          onClick={() => setDialogOpen(true)}
+          className="bg-red-600 hover:bg-red-700 cursor-pointer"
+        >
+          <Plus size={16} />
+          New Transcript
+        </Button>
       </div>
       {children}
       <TranscribeDialog open={dialogOpen} onOpenChange={setDialogOpen} />

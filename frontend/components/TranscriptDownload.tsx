@@ -10,38 +10,38 @@ import { Card } from "./ui/card";
 import ChatButton from "./chat/ChatButton";
 
 const defaultTranscriptOptions: TranscriptOptions = {
-    filetype: "txt",
-    showVideoId: true,
-    showTitle: true,
-    showChannelName: true,
-    showPublishDate: true,
-    showTimestamps: true,
+  filetype: "txt",
+  showVideoId: true,
+  showTitle: true,
+  showChannelName: true,
+  showPublishDate: true,
+  showTimestamps: true,
 };
 
 export default function TranscriptDownload({
-    transcript,
+  transcript,
 }: {
-    transcript: Transcript;
+  transcript: Transcript;
 }) {
-    const [previewOptions, setPreviewOptions] = useState<TranscriptOptions>(
-        defaultTranscriptOptions,
-    );
-    const transcriptText = formatTranscript(transcript, previewOptions);
+  const [previewOptions, setPreviewOptions] = useState<TranscriptOptions>(
+    defaultTranscriptOptions,
+  );
+  const transcriptText = formatTranscript(transcript, previewOptions);
 
-    return (
-        <div className="grid grid-cols-2 gap-10 p-10">
-            <Card className="p-10">
-                <TranscriptPreview transcript={transcript} />
-                <DownloadFilePreview transcriptText={transcriptText} />
-                <ChatButton transcript={transcript} />
-            </Card>
-            <div>
-                <FileOptionsControl
-                    transcript={transcript}
-                    previewOptions={previewOptions}
-                    setPreviewOptions={setPreviewOptions}
-                />
-            </div>
-        </div>
-    );
+  return (
+    <div className="grid grid-cols-2 gap-10 p-10">
+      <Card className="p-10">
+        <TranscriptPreview transcript={transcript} />
+        <DownloadFilePreview transcriptText={transcriptText} />
+        <ChatButton transcript={transcript} />
+      </Card>
+      <div>
+        <FileOptionsControl
+          transcript={transcript}
+          previewOptions={previewOptions}
+          setPreviewOptions={setPreviewOptions}
+        />
+      </div>
+    </div>
+  );
 }

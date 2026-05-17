@@ -1,0 +1,15 @@
+services:
+  backend:
+    init: true
+    user: root
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+  frontend:
+    command: sh -c "npm install && npm run dev"
+    user: root
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      NODE_ENV: development

@@ -9,8 +9,6 @@ services:
         condition: service_healthy
     env_file:
       - .env
-    volumes:
-      - ./backend:/app
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
@@ -29,8 +27,6 @@ services:
     depends_on:
       backend:
         condition: service_healthy
-    environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
     init: true
     restart: unless-stopped
     healthcheck:
